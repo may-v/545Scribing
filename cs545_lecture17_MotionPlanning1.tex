@@ -2,28 +2,26 @@
 \usepackage{geometry}
 \usepackage{lipsum}
 \usepackage{multicol}
-%\usepackage{algorithm}
-%\usepackage{algorithmic}
-%\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage[sc]{mathpazo}                   
+\usepackage{graphics}
+
 \usepackage[%  
     colorlinks=true,
     pdfborder={0 0 0},
     linkcolor=red
 ]{hyperref}
 
-\usepackage{enumitem}
-
 \setlist[itemize]{noitemsep, topsep=0pt}
 \setlist[enumerate]{noitemsep, topsep=0pt}
 
-\usepackage{fancyhdr}
-\usepackage[english]{babel}
-\usepackage[sc]{mathpazo}                   
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \newcommand{\bb}[1]{\textbf{#1}}
 
-\usepackage{graphics}
+
 \graphicspath{ {./imgs/} }
 
 \fancyhead[L]{CSCI 545: Introduction to Robotics}
@@ -32,7 +30,8 @@
 \title{Lecture 17: \it{Motion Planning I}}
 \author{Scribe:  \it{Duong Le, Keyu Han, Baiyu Huang, Seunghee Yoon}}
 \date{}
-%document
+
+
 \begin{document}
 \maketitle
 \thispagestyle{fancy}
@@ -41,11 +40,11 @@
 \subsection{Visibility Graph}
 \section{Sampling-based Motion Planning}
 Sampling-based motion planning is not complete: not guarantee to find a solution when one exists. However, as the number of samples goes to infinity, there is a strong guarantee that it can find a solution.\\
-There are 2 types of planning algorithms:\\
+There are 2 types of sample-based planning algorithms:\\
 \begin{multicols*}{2}
 \textbf{\underline{Multiple Query Algorithm}}
 \begin{itemize}
-\item Roadmap is built beforehand. Then the roadmap can be used multiple times for different queries.
+\item Roadmap is built beforehand. Then it can be used multiple times for different queries.
 \item Query is fast since roadmap is already generated.
 \item Keeping roadmap all the time is expensive.
 \item Can only deal with static environment - has to rebuild the roadmap when environment changed.
@@ -54,7 +53,7 @@ There are 2 types of planning algorithms:\\
 \columnbreak
 \textbf{\underline{Single Query Algorithm}}
 \begin{itemize}
-\item No roadmap is built beforehand. Find a path from start to goal then finish\\
+\item No roadmap is built beforehand. Find a path from start to goal then finish
 \item Query is slower.\\
 \item No saved roadmap - better memory \\
 \item Can deal with dynamic environment 
@@ -70,20 +69,18 @@ There are 2 steps:
 \end{enumerate}
 
 \subsubsection{Roadmap Construction}
-
 \begin{figure}[h]
 \includegraphics{PRM}
 \centering
 \caption{Roadmap Construction Algorithm}
 \label{fig:roadmap_alg}
 \end{figure}
-
 Let $\Delta(q, q')$ be a function that returns either a collision-free path from q to q' or NIL if it cannot find such a path. There are many algorithms can be used for $\Delta$. For example, if we want to check whether there is a straight-line path from q to q, we can use binary search to check for collision.\\
 Figure \ref{fig:roadmap_alg} shows an algorithm to construct a roadmap:
 \begin{itemize}
-\item Initialize graph $G=(V,E)$ to be empty.
-\item From line (4) to (8) describes sampling process: keep sampling to get $n$ numbers of collision-free samples.
-\item From line (9) to end describes process to build roadmap from $n$ samples: for every sample node $q\in V$, create a set $N_q$ of $k$ closest neighbors. Then from every $q' \in N_q$, whenever function $\Delta(q, q')$ succeeds to compute a collision-free path from $q$ to $q'$, the edge $(q,q')$ is added to the roadmap. Figure \ref{fig:roadmap_example} shows an example of roadmap using $\Delta$ as straight-line planner.
+\item Line (1) and (2): Initialize graph $G=(V,E)$ to be empty.
+\item Line (3) to (8): describes sampling process: keep sampling to get $n$ numbers of collision-free samples.
+\item Line (9) to end: describes process to build roadmap from $n$ samples: for every sample node $q\in V$, create a set $N_q$ of $k$ closest neighbors. Then from every $q' \in N_q$, whenever function $\Delta(q, q')$ succeeds to compute a collision-free path from $q$ to $q'$, the edge $(q,q')$ is added to $E$. Figure \ref{fig:roadmap_example} shows an example of roadmap using $\Delta$ as straight-line planner
 \end{itemize}
 
 \begin{figure}[h]
