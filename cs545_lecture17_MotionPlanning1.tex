@@ -118,7 +118,7 @@ The visibility roadmaps are build without any explicit computation of the visibi
 \includegraphics{visibility_psm_visual}
 \centering
 \caption{node added as a guard; node rejected; connection node merging two connected components}
-\label{fig:roadmap_alg}
+\label{fig:vispsm_visual}
 \end{figure}
 
 \subsubsection{Principle}
@@ -126,7 +126,7 @@ The algorithm that we propose below is general. It allows us to build visibility
 roadmaps without requiring any explicit computation of the visibility domains.
 The roadmap is constructed incrementally by randomly sampling the conguration
 space and attempting to connect some pairs of collision-free samples by the
-local method. Figure 2 illustrates the principle of the sampling strategy used at
+local method. Figure \ref{fig:vispsm_visual} illustrates the principle of the sampling strategy used at
 each iteration of the algorithm. Randomly chosen congurations are checked for
 collision to generate samples in $CS_free$; when a free sample is found, it is added to
 the roadmap either if it does not ‘see’ any another node of the current roadmap (i.e.
@@ -150,7 +150,7 @@ and Connection. The nodes of Guard belonging to a same connected component
 \includegraphics{visibility_psm_code}
 \centering
 \caption{Visibility PSM Algorithm}
-\label{fig:roadmap_alg}
+\label{fig:vispsm_alg}
 \end{figure}
 At each elementary iteration, the algorithm randomly selects a collision-free
 configuration q. The main loop processes all the current components $G_i$ of Guard. The algorithm loops over the nodes g in $G_i$ , until it finds a node visible from q. The
@@ -173,10 +173,10 @@ probably greater than (1-1/M).
 \includegraphics{visibility_psm_failure}
 \centering
 \caption{Visibility PSM Failure}
-\label{fig:roadmap_alg}
+\label{fig:vispsm_failure}
 \end{figure}
 The random generation of the guards may produce in some cases guards that will
-be difficult to connect. This effect is illustrated in Fig. 6 where two guards have
+be difficult to connect. This effect is illustrated in Fig. \ref{fig:vispsm_failure} where two guards have
 been generated near the boundary of the black triangular obstacle. They fully cover
 $CS_free$, however the intersection of both visibility domains is ‘unfortunately’ small.
 The only way to complete the roadmap is to pick a connection node in the small
