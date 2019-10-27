@@ -121,7 +121,7 @@ The visibility roadmaps are build without any explicit computation of the visibi
 \label{fig:roadmap_alg}
 \end{figure}
 
-\subsection{Principle}
+\subsubsection{Principle}
 The algorithm that we propose below is general. It allows us to build visibility
 roadmaps without requiring any explicit computation of the visibility domains.
 The roadmap is constructed incrementally by randomly sampling the conguration
@@ -141,7 +141,7 @@ When a free sample is found, it is added to the roadmap in two cases:
 \item If it does not “see” another node already in R . This will be a new guard.
 \item If it is seen at leas by two nodes belonging to two distint connected components of will be a connection node.
 \end{itemize}
-\subsection{Algorithm}
+\subsubsection{Algorithm}
 The algorithm, called Visib-PRM, iteratively processes two sets of nodes: Guard
 and Connection. The nodes of Guard belonging to a same connected component
 (i.e. connected by nodes of Connection) are gathered in subsets $G_i$.
@@ -168,9 +168,9 @@ $CS_free$. This is a critical parameter which controls the end of the algorithm.
 the algorithm stops when ntry becomes greater than a user set value M, which
 means that the volume of the free space covered by visibility domains becomes
 probably greater than (1-1/M).
-\subsection{Failure}
+\subsubsection{Failure}
 \begin{figure}[h]
-\includegraphics{545Scribing/visibility_psm_failure}
+\includegraphics{visibility_psm_failure}
 \centering
 \caption{Visibility PSM Failure}
 \label{fig:roadmap_alg}
