@@ -7,6 +7,7 @@
 \usepackage[english]{babel}
 \usepackage[sc]{mathpazo}                   
 \usepackage{graphics}
+\usepackage{graphicx}
 
 \usepackage[%  
     colorlinks=true,
@@ -28,7 +29,7 @@
 \fancyhead[R]{Fall 2019}
 
 \title{Lecture 17: \it{Motion Planning I}}
-\author{Scribe:  \it{Duong Le, Keyu Han, Baiyu Huang, Seunghee Yoon}}
+\author{Scribe:  \it{Duong Le, Keyu Han, Baiyu Huang, Seunghee Yoon, Guifan Weng}}
 \date{}
 
 
@@ -36,7 +37,54 @@
 \maketitle
 \thispagestyle{fancy}
 \section{Complete Motion Planning}
+
+\subsection{Element of Motion plan}
+Motion plan generally takes the elements followings into the considerations. 
+\begin{itemize}
+\item \textbf{Plans} \{Discrete, Continous, Hibrid\} \\
+This category indicates whether a certain plan covers a discrete number space or a continuous one. For instance, grasping an object in a continuous space while make a decision among discrete classes would belong to Hybrid plans.
+\item \textbf{Environment} \{Immovable, Movable, Moving\}\\
+This is the environment where an agent moves. The example of Immovable environment can be fixed obstacles such as walls while movable ones are Movable objects like apples, chairs. Moving objects are literally the non-fixed object on the fields such as animals, humans.
+\item \textbf{Interaction} \{None-Contact, Contact\}\\
+An agent interacts with the environment, which should be considered during planning. None-Contact interaction is the interaction where the agent tries to avoid a collision while Contact embraces situations such as grasping, pushing, or pulling an object.
+\item \textbf{Uncertainty} \{Node, Known, Bounded, Unknown\}\\
+‘Node’ refers to given configuration spaces q while ‘Known’ does to the position according to the configurations, which is p(q). ‘Bounded’ refers to restrict conditions that bound our configurations (ex, q must belong to Q). ‘Unknown’ indicates unknown configuration that we need to figure out. Usually, the unknown configuration is a semi solution or solution itself of entire planning problems. 
+\item \textbf{Robot Motion} \{Kinematic, Dynamics\}\\
+Kinematic setting describes a robot motion with configuration q while Dynamics does with configuration and its derivative q’ that is, the velocity of q.
+\end{itemize}
+\subsection{Problem Formulation(piano mover's problem )}
+Figure \ref{fig:piano_movers_problem} describes the elements of Piano mover’s problems with which we will usually deal in motion panning. The criteria settings of the problems are the followings:
+\begin{itemize}
+\item A world with $R^2$ or $R^3$ spaces.  
+\item Obstacles occupies a space Cobs ($Q_{obs}$) in the world
+\item A robot and its configuration space $C(Q)$ 
+\item Where $Q_{free} = Q-Q_{obs}$, $qs$ is in $Q_{free}$ at the initial configurations; and so is $qg$. $Q_{free}$ is the configuration spaces that are not occupied with obstacles. 
+\end{itemize}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=12cm]{piano_movers_problem.png}
+  \label{fig:piano_movers_problem}
+  \caption{piano movers problem}
+\end{figure}
+For short, our goal as to that problem is to come up with a function that executes the mapping $T:[0, 1] \rightarrow Q_{free}$ where $qs = T(0)$ and $qg = T(1)$. In other word, this is finding a path specifying configurations corresponding to each time steps between 0 and 1. 
 \subsection{Cell Decompose}
+Considering the contents above, it is obvious that how to represent and know free space is a crucial issue to solve piano mover’s problems. Cell Decompose is a category of a method to represent the free space where the free spaces are the set of ‘cells’ into which the free spaces are separated. Trapezoidal decomposition algorithm is one of them. Each node corresponds to a cell and an edge connects nodes of adjacent cells forming graphs. After the cell decomposition, path planning with a cell decomposition is usually done in two steps: first, the planner determines the cells that contain the start and goal, respectively, and then the planner searches for a path within the adjacency graph. Note that the adjacency graph could serve as a roadmap of the free space as well. If there is one ore more path that connects start and goal, that means there is a path among the road map; thus, this solution is roadmap based method as well where it is guaranteed to derive a solution from a roadmap or at the very least know there is no valid route. Yet, this method can only be applied to simple spaces.
+\subsubsection{Algorithm}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{cell_decompose.png}
+  \caption{cell decompose}
+  \label{fig:cell_decompose}
+\end{figure}
+Fig \ref{fig:cell_decompose} The resulting paths in the adjacency graph and free space. The straight lines up and down are called ‘boundary’ while the separated areas (cells) are ‘trapajoid’.
+
+We assume all the vertices and their Euclidean positions are known. Then for each vertex, do the following steps.
+\begin{itemize}
+  \item Draw line heading to upper and bottom from the vertex until it meets an intersection.
+  \item Sample a point in every trapezoid and its boundary; these points will be saved as nodes of a graph. Note that very boundary line must exclude an intersection.
+\end{itemize}
+After doing that, find the trapezoid where our start and goal belongs to; and connect all the nodes forming a graph. Then, one can easily find a path by using the graph search algorithms such as DFS, or BFS.
+
 \subsection{Visibility Graph}
 
 The defining characteristics of a visibility map are that its nodes share an edge if they are within line of sight of each other, and that all points in the robot's free space are within line of sight of at least one node on the visibility map. This second statement implies that visibility maps, by definition, possess the properties of accessibility and departability. Connectivity must then be explicitly proved for each map for the structure to be a roadmap. In this section, we consider the simplest visibility map, called the visibility graph
@@ -57,33 +105,33 @@ Note that we are embedding the nodes and edges in the free space and that edges 
 By definition, the visibility graph has the properties of accessibility and departability. We leave it to the reader as an exercise to prove the visibility graph is connected in a connected component of free space. Using the standard two-norm (Euclidean distance), the visibility graph can be searched for the shortest path . The visibility graph can be defined for a three dimensional configuration space populated with polyhedral obstacles, but it does not necessarily contain the shortest paths in such a space.\\
 
 \begin{figure}[h]
-	\centering
-	\includegraphics{imgs/shortest_path.png}
-	\caption{The thin solid lines delineate the edges of the visibility graph for the three obstacles represented as filled polygons. The thick dotted line represents the shortest path between the start and goal}
+  \centering
+  \includegraphics{imgs/shortest_path.png}
+  \caption{The thin solid lines delineate the edges of the visibility graph for the three obstacles represented as filled polygons. The thick dotted line represents the shortest path between the start and goal}
 \end{figure}
 
 Unfortunately, the visibility graph has many needless edges. The use of supporting and separating lines can reduce the number of edges. A supporting line is tangent to two obstacles such that both obstacles lie on the same side of the line. For nonsmooth obstacles, such as polygons, a supporting line $l$ can be tangent at a vertex $v_i$ if $\beta_\epsilon(v_i) \bigcap l \bigcap QO_i = v_i $. A separating line is tangent to two obstacles such that the obstacles lie on opposite sides of the line.\\
 
 \begin{figure}[h]
-	\centering
-	\includegraphics{imgs/Supporting_separating_line_segments.png}
-	\caption{Supporting and separating line segments. Note that for polygonal obstacles, we use a nonsmooth notion of tangency}
+  \centering
+  \includegraphics{imgs/Supporting_separating_line_segments.png}
+  \caption{Supporting and separating line segments. Note that for polygonal obstacles, we use a nonsmooth notion of tangency}
 \end{figure}
 
 The reduced visibility graph is soley constructed from supporting and separating lines. In other words, all edges of the original visibility graph that do not lie on a supporting or separating line are removed. \\
 
 \begin{figure}[h]
-	\centering
-	\includegraphics{imgs/R_V_G.png}
-	\caption{Reduced visibility graph}
+  \centering
+  \includegraphics{imgs/R_V_G.png}
+  \caption{Reduced visibility graph}
 \end{figure}
 
 \subsubsection{Visibility Graph Construction}
 \begin{figure}[h]
-	\centering
-	\includegraphics{imgs/Algorithm_5.png}
-	\caption{Rotational Plane Sweep Algorithm }
-	\label{fig:Algorithm_5}
+  \centering
+  \includegraphics{imgs/Algorithm_5.png}
+  \caption{Rotational Plane Sweep Algorithm }
+  \label{fig:Algorithm_5}
 \end{figure}
 
 Let $V={v_1,...,v_n}$ be the set of vertices of the polygons in the configuration space as well as the start and goal configurations. To construct the visibility graph, for each be the set of vertices of the polygons in the configuration space as well as the start and goal configurations. To construct the visibility graph, for each $v \in V$ we must determine which other vertices are visible to $v$.The most obvious wayto make this determination is to test all line segments $vv_i,v \ne v_i$to see if they intersect an edge of any polygon. For a particular $vv_i$, there are $O(n)$ intersections to check because there are $O(n)$edges from the obstacles. Now, there are $O(n)$ potential segments emanating from $v$,so for a particular $v$, there are $O(n_2)$ tests to determine which vertices are indeed visible from $v$, This must be done for all $v \in V$ and thus the construction of the visibility graph would have complexity $O(n_3)$ \\
