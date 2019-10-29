@@ -53,7 +53,7 @@ An agent interacts with the environment, which should be considered during plann
 Kinematic setting describes a robot motion with configuration q while Dynamics does with configuration and its derivative q’ that is, the velocity of q.
 \end{itemize}
 \subsection{Problem Formulation(piano mover's problem )}
-Figure \ref{fig:piano_movers_problem} describes the elements of Piano mover’s problems with which we will usually deal in motion panning. The criteria settings of the problems are the followings:
+Figure \ref{fig:pmp} describes the elements of Piano mover’s problems with which we will usually deal in motion panning. The criteria settings of the problems are the followings:
 \begin{itemize}
 \item A world with $R^2$ or $R^3$ spaces.  
 \item Obstacles occupies a space Cobs ($Q_{obs}$) in the world
@@ -63,7 +63,7 @@ Figure \ref{fig:piano_movers_problem} describes the elements of Piano mover’s 
 \begin{figure}[h]
   \centering
   \includegraphics[width=12cm]{piano_movers_problem.png}
-  \label{fig:piano_movers_problem}
+  \label{fig:pmp}
   \caption{piano movers problem}
 \end{figure}
 For short, our goal as to that problem is to come up with a function that executes the mapping $T:[0, 1] \rightarrow Q_{free}$ where $qs = T(0)$ and $qg = T(1)$. In other word, this is finding a path specifying configurations corresponding to each time steps between 0 and 1. 
@@ -81,7 +81,7 @@ Fig \ref{fig:cell_decompose} The resulting paths in the adjacency graph and free
 We assume all the vertices and their Euclidean positions are known. Then for each vertex, do the following steps.
 \begin{itemize}
   \item Draw line heading to upper and bottom from the vertex until it meets an intersection.
-  \item Sample a point in every trapezoid and its boundary; these points will be saved as nodes of a graph. Note that very boundary line must exclude an intersection.
+  \item Sample a point in every trapezoid and its boundary; these points will be saved as nodes of a graph. Note that every boundary line must exclude an intersection.
 \end{itemize}
 After doing that, find the trapezoid where our start and goal belongs to; and connect all the nodes forming a graph. Then, one can easily find a path by using the graph search algorithms such as DFS, or BFS.
 
@@ -286,7 +286,4 @@ the probability to select the first two guards with a small intersection domain 
 low. Moreover, this undesirable effect was never observed in practice in all the
 examples we experimented on with the algorithm.
 
-
-
 \end{document}
-
