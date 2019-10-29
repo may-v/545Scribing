@@ -58,7 +58,7 @@ Figure \ref{fig:piano_movers_problem} describes the elements of Piano mover’s 
 \item A world with $R^2$ or $R^3$ spaces.  
 \item Obstacles occupies a space Cobs ($Q_{obs}$) in the world
 \item A robot and its configuration space $C(Q)$ 
-\item Where $Q_{free} = Q-Q_{obs}$, $qs$ is in $Q_{free}$ at the initial configurations; and so is $qg$. $Q_{free}$ is the configuration spaces that are not occupied with obstacles. 
+\item Where $Q_{free} = Q\setminus Q_{obs}$, $qs$ is in $Q_{free}$ at the initial configurations; and so is $qg$. $Q_{free}$ is the configuration spaces that are not occupied with obstacles. 
 \end{itemize}
 \begin{figure}[h]
   \centering
@@ -96,7 +96,7 @@ The standard visibility graph is defined in a two-dimensional polygonal configur
 $$e_ij \ne \emptyset \Longleftrightarrow sv_i + (1-s)v_i \in cl(Q_{free})   \forall s \in [0,1] $$
 \begin{figure}[h]
 \centering
-\includegraphics{imgs/Polygonal_configuration_space.png}
+\includegraphics[width=9cm]{imgs/Polygonal_configuration_space.png}
 \caption{Polygonal configuration space with a start and goal}
 \end{figure}
 
@@ -106,7 +106,7 @@ By definition, the visibility graph has the properties of accessibility and depa
 
 \begin{figure}[h]
   \centering
-  \includegraphics{imgs/shortest_path.png}
+  \includegraphics[width=9cm]{imgs/shortest_path.png}
   \caption{The thin solid lines delineate the edges of the visibility graph for the three obstacles represented as filled polygons. The thick dotted line represents the shortest path between the start and goal}
 \end{figure}
 
@@ -122,7 +122,7 @@ The reduced visibility graph is soley constructed from supporting and separating
 
 \begin{figure}[h]
   \centering
-  \includegraphics{imgs/R_V_G.png}
+  \includegraphics[width=9cm]{imgs/R_V_G.png}
   \caption{Reduced visibility graph}
 \end{figure}
 
