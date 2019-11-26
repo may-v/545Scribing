@@ -266,7 +266,7 @@ When a free sample is found, it is added to the roadmap in two cases:
 
 \begin{algorithm} 
 \caption{Visibility\_PRM\_Algorithm} 
-\label{alg:prm_alg} 
+\label{alg:visib_prm_alg} 
   \begin{algorithmic}[1]
 
     \STATE $Guard \leftarrow \emptyset$ 
@@ -286,26 +286,27 @@ When a free sample is found, it is added to the roadmap in two cases:
               \IF {$g_{vis} = \emptyset$}
                   \STATE $g_{vis} \leftarrow g$
                   \STATE $G_{vis} \leftarrow G_{i}$
-              \ENDIF
               \ELSE
                   \STATE Add $q$ to Connection;
                   \STATE Create edges ($q$, $g$) and ($q$,$g_{vis}$)
                   \STATE Merge components $G_{vis}$ and $G_{i}$
+              \ENDIF
           \ENDFOR
           \UNTIL {$found$=$TRUE$}
           \IF {$g_{vis}$ = $\emptyset$}
               \STATE add{$q$} to $Guard$
               \STATE $ntry \leftarrow 0$
-          \ENDIF
+
           \ELSE
               \STATE $ntry$ = $ntry+1$
+          \ENDIF
       \ENDFOR
   \ENDWHILE
     \end{algorithmic}
 \end{algorithm}
 
 
-The algorithm, called Visib-PRM, iteratively processes two sets of nodes: Guard
+The algorithm \ref{alg:visib_prm_alg}, called Visib-PRM, iteratively processes two sets of nodes: Guard
 and Connection. The nodes of Guard belonging to a same connected component
 (i.e. connected by nodes of Connection) are gathered in subsets $G_i$.
 
