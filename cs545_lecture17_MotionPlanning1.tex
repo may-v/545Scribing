@@ -1,3 +1,25 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@baiyu123 
+Learn Git and GitHub without any code!
+Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
+
+
+1
+04may-v/545Scribing
+ Code Issues 0 Pull requests 0 Actions Projects 0 Wiki Security Insights
+545Scribing/cs545_lecture17_MotionPlanning1.tex
+@may-v may-v compile alg in Tex
+dde2e2d 2 hours ago
+@may-v@gwengusc@baiyu123
+309 lines (271 sloc)  20.9 KB
+  
 \documentclass[11pt]{article}
 \usepackage{geometry}
 \usepackage{lipsum}
@@ -232,7 +254,6 @@ If obstacles are very closed to each other, generated roadmap will be disconnect
 \end{figure}
 Solution: sample more points toward edges of the obstacles. We can use binary search to find the closest point to the obstacle that's collision-free, and then sample more points near that point. The process of sampling becomes more expensive, but result graph is less dense and faster to compute path.
 
-
 \subsection{Visibility PRM}
 The roadmap is constructed incrementally by randomly sampling the configuration space and attempting to connect some pairs of collision-free samples by the local method.
 The visibility roadmaps are build without any explicit computation of the visibility domains.
@@ -344,3 +365,6 @@ low. Moreover, this undesirable effect was never observed in practice in all the
 examples we experimented on with the algorithm.
 
 \end{document}
+
+
+
