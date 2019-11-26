@@ -9,6 +9,11 @@
 \usepackage{graphics}
 \usepackage{graphicx}
 
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
 \usepackage[%  
     colorlinks=true,
     pdfborder={0 0 0},
@@ -148,7 +153,7 @@ There are 2 types of sample-based planning algorithms:\\
 \item Roadmap is built beforehand. Then it can be used multiple times for different queries.
 \item Query is fast since roadmap is already generated.
 \item Keeping roadmap all the time is expensive.
-\item Can only deal with static environment - has to rebuild the roadmap when environment changed.
+\item Can only deal with static environment - has to rebuild the roadmap whenever anything changed in environment.
 \end{itemize}
 \vfill\null
 \columnbreak
@@ -169,19 +174,42 @@ There are 2 steps:
 \item Query state: search roadmap given start and goal
 \end{enumerate}
 
-\subsubsection{Roadmap Construction}
-\begin{figure}[h]
-\includegraphics{PRM}
-\centering
-\caption{Roadmap Construction Algorithm}
-\label{fig:roadmap_alg}
-\end{figure}
+\subsubsection{Roadmap Construction Algorithm}
+\begin{algorithm} 
+\caption{Roadmap\_Construction\_Algorithm} 
+\label{alg:prm_alg} 
+  \begin{algorithmic}[1]
+  \REQUIRE~~\\
+  	$n$: number of nodes to put in the roadmap\\
+  	$k$: number of closest neighbors to examine for each configuration
+  \ENSURE~~\\
+    A roadmap $G=(V,E)$
+    \STATE $V \leftarrow \emptyset$ 
+    \STATE $E \leftarrow \emptyset$
+    \WHILE {$|V| < n$}
+      \REPEAT
+		\STATE $q \leftarrow$ a random configuration in $Q$      
+      \UNTIL{$q$ is collision-free}
+      \STATE $V \leftarrow V \cup \{q\}$
+    \ENDWHILE
+    
+	\FORALL {$q \in V$}
+	  \STATE $N_q \leftarrow$ the $k$ closest neighbors of $q$ chosen from $V$ according to $dist$
+	  \FORALL {$q' \in N_q$}
+	    \IF {$(q,q') \notin E$ {\bf and} $\Delta(q,q') \ne NIL$} 
+	      \STATE $E \leftarrow E \cup \{(q,q')\}$
+	    \ENDIF
+	  \ENDFOR
+	\ENDFOR
+    \end{algorithmic}
+\end{algorithm}
+
 Let $\Delta(q, q')$ be a function that returns either a collision-free path from q to q' or NIL if it cannot find such a path. There are many algorithms can be used for $\Delta$. For example, if we want to check whether there is a straight-line path from q to q, we can use binary search to check for collision.\\
-Figure \ref{fig:roadmap_alg} shows an algorithm to construct a roadmap:
+Roadmap construction algorithm shows in Algorithm \ref{alg:prm_alg}:
 \begin{itemize}
 \item Line (1) and (2): Initialize graph $G=(V,E)$ to be empty.
-\item Line (3) to (8): describes sampling process: keep sampling to get $n$ numbers of collision-free samples.
-\item Line (9) to end: describes process to build roadmap from $n$ samples: for every sample node $q\in V$, create a set $N_q$ of $k$ closest neighbors. Then from every $q' \in N_q$, whenever function $\Delta(q, q')$ succeeds to compute a collision-free path from $q$ to $q'$, the edge $(q,q')$ is added to $E$. Figure \ref{fig:roadmap_example} shows an example of roadmap using $\Delta$ as straight-line planner
+\item Line (3) to (8) describes sampling process: keep sampling to get $n$ numbers of collision-free samples.
+\item Line (9) to the end is process to build roadmap from $n$ samples: for every sample node $q\in V$, create a set $N_q$ of $k$ closest neighbors. Then from every $q' \in N_q$, whenever function $\Delta(q, q')$ succeeds to compute a collision-free path from $q$ to $q'$, the edge $(q,q')$ is added to $E$. Figure \ref{fig:roadmap_example} shows an example of roadmap using $\Delta$ as straight-line planner
 \end{itemize}
 
 \begin{figure}[h]
@@ -195,21 +223,13 @@ Figure \ref{fig:roadmap_alg} shows an algorithm to construct a roadmap:
 When you have a start point and end point, you connect them to the graph and then using graph searching algorithm to find path from start to end.
 
 \subsubsection{Failure}
-Some reasons to failure:
-\begin{itemize}
-\item Connectivity: disconnected graph
-\item Obstacles are very closed to the others. 
-\end{itemize}
-Solution: generate more samples.\\
-
+If obstacles are very closed to each other, generated roadmap will be disconnected. Possible solution is increasing sampling rate to get more samples. However, probability to sample between the obstacles is very unlikely. For example, in figure \ref{fig:closed_obs}, the chance to sample points in the narrow road between 2 obstacles is very low. If you keep sampling more points, the graph will become so dense and will take a lot of time to find a path between start and end point.\\
 \begin{figure}
 \includegraphics{closed_obs}
 \centering
 \caption{An example when obstacles are very closed to each other}
 \label{fig:closed_obs}
 \end{figure}
-
-But in the case when obstacles are closed to the others, the probability to sample between the obstacles is very unlikely. For example, in figure \ref{fig:closed_obs}, the chance to sample points in the narrow road between 2 obstacles is very low. If you keep sampling more points, the graph will become so dense and will take a lot of time to find a path between start and end point.\\
 Solution: sample more points toward edges of the obstacles. We can use binary search to find the closest point to the obstacle that's collision-free, and then sample more points near that point. The process of sampling becomes more expensive, but result graph is less dense and faster to compute path.
 
 \subsection{Visibility PRM}
