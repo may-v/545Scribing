@@ -216,10 +216,10 @@ Solution: sample more points toward edges of the obstacles. We can use binary se
 The roadmap is constructed incrementally by randomly sampling the configuration space and attempting to connect some pairs of collision-free samples by the local method.
 The visibility roadmaps are build without any explicit computation of the visibility domains.
 \begin{figure}[h]
-\includegraphics{visibility_psm_visual}
+\includegraphics[width=15cm]{visibility_prm_visual}
 \centering
 \caption{node added as a guard; node rejected; connection node merging two connected components}
-\label{fig:vispsm_visual}
+\label{fig:visprm_visual}
 \end{figure}
 
 \subsubsection{Principle}
@@ -227,7 +227,7 @@ The algorithm that we propose below is general. It allows us to build visibility
 roadmaps without requiring any explicit computation of the visibility domains.
 The roadmap is constructed incrementally by randomly sampling the configuration
 space and attempting to connect some pairs of collision-free samples by the
-local method. Figure \ref{fig:vispsm_visual} illustrates the principle of the sampling strategy used at
+local method. Figure \ref{fig:visprm_visual} illustrates the principle of the sampling strategy used at
 each iteration of the algorithm. Randomly chosen configurations are checked for
 collision to generate samples in $C_{free}$; when a free sample is found, it is added to
 the roadmap either if it does not ‘see’ any another node of the current roadmap (i.e.
@@ -240,7 +240,7 @@ volume of free space currently covered by the roadmap.
 When a free sample is found, it is added to the roadmap in two cases:
 \begin{itemize}
 \item If it does not “see” another node already in R . This will be a new guard.
-\item If it is seen at leas by two nodes belonging to two distint connected components of will be a connection node.
+\item If it is seen at least by two nodes belonging to two distinct connected components of will be a connection node.
 \end{itemize}
 \subsubsection{Algorithm}
 The algorithm, called Visib-PRM, iteratively processes two sets of nodes: Guard
@@ -248,40 +248,39 @@ and Connection. The nodes of Guard belonging to a same connected component
 (i.e. connected by nodes of Connection) are gathered in subsets $G_i$.
 
 \begin{figure}[h]
-\includegraphics{visibility_psm_code}
+\includegraphics[width=10cm]{visibility_prm_code}
 \centering
 \caption{Visibility PRM Algorithm}
-\label{fig:vispsm_alg}
+\label{fig:visprm_alg}
 \end{figure}
 At each elementary iteration, the algorithm randomly selects a collision-free
 configuration q. The main loop processes all the current components $G_i$ of Guard. The algorithm loops over the nodes g in $G_i$ , until it finds a node visible from q. The
 first time the algorithm succeeds in finding such a visible node g, it memorizes both
 g and its component $G_i$, and switches to the next component $G_{i+1}$. When q ‘sees’
-another guard g
-0 in another component $G_j$ , the algorithm adds q to the Connection
+another guard g$'$ in another component $G_j$ , the algorithm adds q to the Connection
 set and the component $G_j$ is merged with the memorized $G_i$. If q is not visible from
 any component, it is added to the Guard set. The main loop fails to create a new
-node when q is visible from only one component; in that case q is rejected.
-Parameter ntry is the number of failures before the insertion of a new guard node.
-1/ntry gives an estimation of the volume not yet covered by visibility domains.
+node when q is visible from only one component; in that case q is rejected.\\
+Parameter \textit{ntry} is the number of failures before the insertion of a new guard node.
+1/\textit{ntry} gives an estimation of the volume not yet covered by visibility domains.
 It estimates the fraction between the non-covered volume and the total volume of
 $C_{free}$. This is a critical parameter which controls the end of the algorithm. Hence,
-the algorithm stops when ntry becomes greater than a user set value M, which
+the algorithm stops when \textit{ntry} becomes greater than a user set value M, which
 means that the volume of the free space covered by visibility domains becomes
 probably greater than (1-1/M).
 \subsubsection{Failure}
 \begin{figure}[h]
-\includegraphics{visibility_psm_failure}
+\includegraphics{visibility_prm_failure}
 \centering
 \caption{Visibility PRM Failure}
-\label{fig:vispsm_failure}
+\label{fig:visprm_failure}
 \end{figure}
 The random generation of the guards may produce in some cases guards that will
-be difficult to connect. This effect is illustrated in Fig. \ref{fig:vispsm_failure} where two guards have
+be difficult to connect. This effect is illustrated in Fig. \ref{fig:visprm_failure} where two guards have
 been generated near the boundary of the black triangular obstacle. They fully cover
 $C_{free}$, however the intersection of both visibility domains is ‘unfortunately’ small.
 The only way to complete the roadmap is to pick a connection node in the small
-triangle. Then the algorithm will fail if the parameter M is not sufficiently high.Nevertheless this case is only a side-effect of the algorithm. Indeed, in this example,
+triangle. Then the algorithm will fail if the parameter M is not sufficiently high. Nevertheless this case is only a side-effect of the algorithm. Indeed, in this example,
 the probability to select the first two guards with a small intersection domain is very
 low. Moreover, this undesirable effect was never observed in practice in all the
 examples we experimented on with the algorithm.
