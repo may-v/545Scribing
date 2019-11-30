@@ -98,7 +98,8 @@ The defining characteristics of a visibility map are that its nodes share an edg
 
 
 The standard visibility graph is defined in a two-dimensional polygonal configuration space (figure 2.1). The nodes $v_i$ of the visibility graph include the start location, the goal location, and all the vertices of the configuration space obstacles. The graph edges $e_ij$ are straight-line segments that connect two line-of-sight nodes $v_i$ and $v_j$, i.e.,
-$$e_ij \ne \emptyset \Longleftrightarrow sv_i + (1-s)v_i \in cl(Q_{free})   \forall s \in [0,1] $$
+$$e_ij \ne \emptyset \Longleftrightarrow sv_i + (1-s)v_i \in cl(Q_{free})\   \forall s \in [0,1] $$
+$$(cl(A)\ means\ closure\ of\ A,\ A\ is\ a\ set)$$
 \begin{figure}[h]
 \centering
 \includegraphics[width=9cm]{imgs/Polygonal_configuration_space.png}
@@ -115,7 +116,7 @@ By definition, the visibility graph has the properties of accessibility and depa
   \caption{The thin solid lines delineate the edges of the visibility graph for the three obstacles represented as filled polygons. The thick dotted line represents the shortest path between the start and goal}
 \end{figure}
 
-Unfortunately, the visibility graph has many needless edges. The use of supporting and separating lines can reduce the number of edges. A supporting line is tangent to two obstacles such that both obstacles lie on the same side of the line. For nonsmooth obstacles, such as polygons, a supporting line $l$ can be tangent at a vertex $v_i$ if $\beta_\epsilon(v_i) \bigcap l \bigcap QO_i = v_i $. A separating line is tangent to two obstacles such that the obstacles lie on opposite sides of the line.\\
+Unfortunately, the visibility graph has many needless edges. The use of supporting and separating lines can reduce the number of edges. A supporting line is tangent to two obstacles such that both obstacles lie on the same side of the line. For nonsmooth obstacles, such as polygons, a supporting line $l$ can be tangent at a vertex $v_i$ if $\beta_\epsilon(v_i) \bigcap l \bigcap QO_i = v_i $($\beta_\epsilon(v_i)$ means open ball of radius $\epsilon$ centered at $v_i$). A separating line is tangent to two obstacles such that the obstacles lie on opposite sides of the line.\\
 
 \begin{figure}[h]
   \centering
@@ -132,17 +133,36 @@ The reduced visibility graph is soley constructed from supporting and separating
 \end{figure}
 
 \subsubsection{Visibility Graph Construction}
-\begin{figure}[h]
-  \centering
-  \includegraphics{imgs/Algorithm_5.png}
-  \caption{Rotational Plane Sweep Algorithm }
-  \label{fig:Algorithm_5}
-\end{figure}
-
-Let $V={v_1,...,v_n}$ be the set of vertices of the polygons in the configuration space as well as the start and goal configurations. To construct the visibility graph, for each be the set of vertices of the polygons in the configuration space as well as the start and goal configurations. To construct the visibility graph, for each $v \in V$ we must determine which other vertices are visible to $v$.The most obvious wayto make this determination is to test all line segments $vv_i,v \ne v_i$to see if they intersect an edge of any polygon. For a particular $vv_i$, there are $O(n)$ intersections to check because there are $O(n)$edges from the obstacles. Now, there are $O(n)$ potential segments emanating from $v$,so for a particular $v$, there are $O(n_2)$ tests to determine which vertices are indeed visible from $v$, This must be done for all $v \in V$ and thus the construction of the visibility graph would have complexity $O(n_3)$ \\
+Let $V=\{v_1,...,v_n\}$ be the set of vertices of the polygons in the configuration space as well as the start and goal configurations. To construct the visibility graph, for each be the set of vertices of the polygons in the configuration space as well as the start and goal configurations. To construct the visibility graph, for each $v \in V$ we must determine which other vertices are visible to $v$.The most obvious wayto make this determination is to test all line segments $vv_i,v \ne v_i$to see if they intersect an edge of any polygon. For a particular $vv_i$, there are $O(n)$ intersections to check because there are $O(n)$edges from the obstacles. Now, there are $O(n)$ potential segments emanating from $v$,so for a particular $v$, there are $O(n^2)$ tests to determine which vertices are indeed visible from $v$, This must be done for all $v \in V$ and thus the construction of the visibility graph would have complexity $O(n^3)$ \\
 There is a more efficient way to compute the set of vertices that are visible from $v$. Imagine a rotating beam of light emanating from a lighthouse beacon. At any moment, the beam illuminates the object that is closest to the lighthouse. Furthermore, as the beam rotates, the obstacle that is illuminated changes only at a finite number of orientations of the beam. If the obstacles in the space are polygons, these orientations occur when the beam is incident on a vertex of some polygon. This insight motivates a class of algorithms known in the computational geometry literature as plane sweep algorithms.\\
 A plane sweep algorithm solves a problem by sweeping a line, called the sweep line, across the plane, pausing at each of the vertices of the obstacles. At each vertex, the algorithm updates a partial solution to the problem. Plane sweep algorithms are used to efficiently compute the intersections of a set of line segments in the plane, to compute intersections of polygons, and to solve many other computational geometry problems.\\
-For the problem of computing the set of vertices visible from$v$, we will let the sweep line, $l$, be a half-line emanating from $v$,and we will use a rotational sweep, rotating $l$ from 0 to $2\pi$. The key to this algorithm is to incrementally maintain the set of edges that intersect $l$ , sorted in order of increasing distance from $v$. If a vertex $v_i$ is visible to $v$, then it should be added to the visibility graph.It is straightforward to determine if $v_i$ is visible to $v$ (see figure \ref{fig:Algorithm_5}). Let $S$ be the sorted list of edges that intersects the half-line emanating from $v$; the set $S$ is incrementally constructed as the algorithm runs. If the line segment $vv_i$ does not intersect the closest edge in $S$, and if$l$ does not lie between the two edges incident on $v$,(the sweep line does not intersect the interior of the obstacle at $v$), then the $v_i$ is visible to $v$.\\
+For the problem of computing the set of vertices visible from$v$, we will let the sweep line, $l$, be a half-line emanating from $v$,and we will use a rotational sweep, rotating $l$ from 0 to $2\pi$. The key to this algorithm is to incrementally maintain the set of edges that intersect $l$ , sorted in order of increasing distance from $v$. If a vertex $v_i$ is visible to $v$, then it should be added to the visibility graph.It is straightforward to determine if $v_i$ is visible to $v$ (see Algorithm \ref{alg:RPS_alg}). Let $S$ be the sorted list of edges that intersects the half-line emanating from $v$; the set $S$ is incrementally constructed as the algorithm runs. If the line segment $vv_i$ does not intersect the closest edge in $S$, and if $l$ does not lie between the two edges incident on $v$,(the sweep line does not intersect the interior of the obstacle at $v$), then the $v_i$ is visible to $v$.\\
+\begin{algorithm} 
+	\caption{Rotational\_Plane\_Sweep\_Algorithm} 
+	\label{alg:RPS_alg} 
+	\begin{algorithmic}[1]
+		\REQUIRE~~\\
+		A set of vertices $\{v_i\} $ (whose edges do not intersect) and a vertex $v$ \\
+		\ENSURE~~\\
+		A subset of vertices from $\{v_i\} $ that are within line of sight of $v$
+		\STATE For each vertex $v_i$, calculate $\alpha_i$,  the angle from the horizontal axis to the line segment $vv_i$
+		\STATE Create the vertex list $\varepsilon$, containing the $\alpha$'s sorted in increasing order.
+		\STATE  Create the active list $S$,containing the sorted list of edges that intersect the horizontal\\
+		half-line emanating from $v$
+		\FORALL {$\alpha_i$}
+		\IF {$v_i$ is visible to $v$}
+		\STATE Add the edge $(v,v_i)$ to the visibility graph.
+		\ENDIF 
+		\IF {$v_i$ is the beginning of an edge,$E$, not in $S$}  
+		\STATE Insert the $E$ into $S$
+		\ENDIF
+		\IF {$v_i$ is the end of an edge $S$}
+		\STATE Delete the edge from $S$
+		\ENDIF
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+
 \newpage
 \section{Sampling-based Motion Planning}
 Sampling-based motion planning is not complete: not guarantee to find a solution when one exists. However, as the number of samples goes to infinity, there is a strong guarantee that it can find a solution.\\
